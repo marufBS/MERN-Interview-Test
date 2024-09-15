@@ -1,9 +1,9 @@
 import {configureStore} from '@reduxjs/toolkit'
-// import drawingpad2Reducer from '../components/drawingpad2Slice'
+import drawingpad2Reducer from '../components/drawingpadSlice'
 
 const store = configureStore({
     reducer:{
-        // drawing:drawingpad2Reducer
+        drawing:drawingpad2Reducer
     }
 })
 

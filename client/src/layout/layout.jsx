@@ -4,7 +4,7 @@ import Dashboard from '../pages/dashboard'
 
 const Layout = () => {
   return (
-    <div>
+    <div className='flex h-dvh flex-col'>
         <Routes>
             <Route path='/' element={<Dashboard/>}/>
             <Route path='/dashboard' element={<Dashboard/>}/>

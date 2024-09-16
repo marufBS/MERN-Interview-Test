@@ -1,6 +1,8 @@
 import React from 'react'
 import { Routes,Route } from 'react-router-dom'
 import Dashboard from '../pages/dashboard'
+// import Drawingpad from '../components/drawingpad'
+// import Drawing from '../components/drawing'
 import Drawingpad from '../components/drawingpad'
 
 const Layout = () => {

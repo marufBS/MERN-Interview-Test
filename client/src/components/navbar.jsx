@@ -1,29 +1,69 @@
 // Navbar.js
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link} from 'react-router-dom';
-import { setDrawingTitle } from './drawingpadSlice';
+import { Link, useParams } from 'react-router-dom';
+import { setDrawingCanvas, setDrawingTitle } from './drawingpadSlice';
+import axios from 'axios';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     // const [isInput, setIsInput] = useState(false)
     const dispatch = useDispatch()
-    const reduxDrawingTitle = useSelector((state)=>state.drawing.drawingTitle)
+    const reduxCanvas = useSelector((state) => state.drawing.drawingCanvas);
+    const reduxDrawingTitle = useSelector((state) => state.drawing.drawingTitle)
+    const drawingThumbnail = useSelector((state) => state.drawing.drawingThumbnail)
+    const canvasBase64 = useSelector((state)=>state.drawing.canvasBase64)
+    const { id } = useParams()
     const toggleNavbar = () => {
         setIsOpen(!isOpen);
     };
+
+    const saveDrawing = async() => {
+
+        // const base64 = await reduxCanvas.to toDataURL({
+        //     format: 'png', // Can be 'jpeg' or 'jpg' if you want a different format
+        //     quality: 0.8, // Quality (0 to 1), applicable for 'jpeg' format
+        // });
+        console.log(canvasBase64)
+
+        // axios.post(`https://api.imgbb.com/1/upload/`,{
+        //     key:'2b6dcaf41fa4832f8d0cfe58769998fb',
+        //     image:base64.split('base64,')[1]
+        // },{ 
+        //     'Content-Type': 'application/x-www-form-urlencoded'
+        //   },).then((res)=>{
+        //     console.log(res.data)
+        // })
+
+        axios.put(`http://localhost:5000/api/drawing/${id}`, {
+            drawingTitle: reduxDrawingTitle,
+            canvas: reduxCanvas,
+            drawingThumbnail: drawingThumbnail
+        }).then((res) => {
+            console.log(res)
+        }).catch((err) => {
+            console.log(err)
+        })
+
+
+    };
+
+    const handleDashboard = ()=>{
+        dispatch(setDrawingCanvas(null))
+    }
+
 
 
     return (
         <nav className="bg-white border-gray-200 shadow">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-4">
-                <input 
-                    className='focus:outline-none border-2 border-white hover:border-black rounded-lg text-center text-xl py-1' 
+                <input
+                    className='focus:outline-none border-2 border-white hover:border-black rounded-lg text-center text-xl py-1'
                     onChange={(e) => dispatch(setDrawingTitle(e.target.value))}
                     onKeyDown={(e) => {
                         // if (e.key === 'Enter') setIsInput(false);
                     }}
-                    defaultValue={reduxDrawingTitle?reduxDrawingTitle:'Untitled Drawing'} 
+                    defaultValue={reduxDrawingTitle ? reduxDrawingTitle : 'Untitled Drawing'}
                 />
                 <button
                     type="button"
@@ -41,8 +81,23 @@ const Navbar = () => {
                     id="navbar-default"
                 >
                     <ul className={`font-medium flex flex-col p-4 mt-4 border border-gray-100 rounded-lg md:flex-row gap-4 md:mt-0 md:border-0 bg-white`}>
-                        <li>
-                            <Link className='text-emerald-400 hover:text-emerald-500 hover:shadow-lg shadow rounded py-2 px-5 transition-all duration-150 ease-in-out' to="/dashboard">Dashboard</Link>
+                        <li onClick={saveDrawing}>
+
+                            <button className="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
+                                <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                                    Update
+                                </span>
+                            </button>
+
+                        </li>
+                        <li onClick={handleDashboard}>
+                            <Link to="/dashboard">
+                                <button className="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
+                                    <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                                        Dashboard
+                                    </span>
+                                </button>
+                            </Link>
                         </li>
                     </ul>
                 </div>

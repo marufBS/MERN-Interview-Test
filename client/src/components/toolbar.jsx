@@ -26,7 +26,7 @@ const Toolbar = ({
             addDraw,
             handleSelect,
             addRect,
-            startErase
+            addErase
         }) => {
     const [selectedTool, setSelectedTool] = useState("select");
 
@@ -40,7 +40,7 @@ const Toolbar = ({
                 addDraw()
                 break;
             case 'eraser':
-                startErase()
+                addErase()
                 break;
             case 'circle':
                 addCircle()
@@ -57,7 +57,7 @@ const Toolbar = ({
     };
 
     return (
-        <div className="flex justify-center max-w-sm">
+        <div className="flex justify-center max-w-md">
             <div className="max-w-md border-red-800 border-3 bg-slate-200 rounded p-2">
                 <button
                     className={`toolbar-button ${selectedTool === "select" ? "active" : ""}`}

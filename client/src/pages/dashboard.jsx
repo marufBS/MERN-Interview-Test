@@ -65,9 +65,9 @@ const Dashboard = () => {
         }
     }
     return (
-        <div className='flex-1 flex justify-center items-center p-10 bg-red-300 overflow-hidden'>
-            <div className='rounded-md  overflow-auto h-full w-full shadow-2xl grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-5 bg-slate-500 items-start'>
-                <div onClick={handleCreateNewDrawing} className='pointer-events-auto relative transition ease-in-out delay-350 hover:bg-slate-300 w-full h-80 bg-slate-200 rounded-md'>
+        <div className='flex-1 flex justify-center items-center overflow-hidden'>
+            <div className='overflow-auto h-full w-full shadow-2xl grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-5 bg-slate-200 items-start'>
+                <div onClick={handleCreateNewDrawing} className='border-2 border-gray-500 pointer-events-auto relative transition ease-in-out delay-350 hover:bg-slate-300 w-full h-80 bg-slate-200 rounded-md'>
                     <div className='flex justify-center items-center'>
                         <div className='absolute inset-0 flex justify-center items-center'>
                             <IoAdd size={200} color='#9c9c9c' />
@@ -76,10 +76,10 @@ const Dashboard = () => {
                 </div>
                 {
                     drawings.map((item, i) => (
-                        <div key={item._id} className='flex flex-col justify-around w-full h-80 transition ease-in-out delay-50 hover:bg-slate-300 bg-slate-200 rounded-md'>
+                        <div key={item._id} className='border-2 border-gray-500 flex flex-col justify-around w-full h-80 transition ease-in-out delay-50 hover:bg-slate-300 bg-slate-200 rounded-md'>
                             <img onClick={() => handleOpenDrawing(item)} className='bg-slate-400 flex-1 rounded-t-md' src={item.canvasThumbnail} alt="" />
                             <div className='flex justify-between p-3'>
-                                <div className='text-xl'>{item.drawingTitle ? item.drawingTitle : 'Untitled Drawing'}</div>
+                                <p className='text-xl text-ellipsis overflow-hidden block'>{item.drawingTitle ? item.drawingTitle : 'Untitled Drawing'}</p>
                                 <div className='flex justify-center items-center'>
                                     <button onClick={() => handleDeleteDrawing(item._id)} type="button" className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-1 text-center inline-flex items-center me-2 ">
                                         <MdOutlineDeleteForever size={25} />

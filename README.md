@@ -1,7 +1,7 @@
 # Assesment of Ontik Technology
 
 
-This is a drawing application built using React and Fabric.js. The application allows users to create, edit, and save drawings on a canvas. The canvas state, drawings managed with Redux and stored in a MongoDB database. 
+This is a drawing application built using React and Fabric.js. The application allows users to create, edit, and save drawings on a canvas. The canvas state, drawings managed with Redux and stored in a MongoDB database.  
 ***
 
 ## Features

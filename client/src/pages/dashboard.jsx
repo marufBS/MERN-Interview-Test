@@ -50,7 +50,7 @@ const Dashboard = () => {
     const handleDeleteDrawing = (id) => {
         if (window.confirm("Are you sure you want to delete ?") == true) {
 
-            axios.delete(`http://localhost:5000/api/drawing/${id}`)
+            axios.delete(`${Vercel_URL}/api/drawing/${id}`)
                 .then((res) => {
                     if (!res.data.error) {
                         setUpdate(!update)

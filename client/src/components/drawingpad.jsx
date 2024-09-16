@@ -27,34 +27,37 @@ const Drawingpad = () => {
             allowTouchScrolling: true,
         });
 
-        canvasInstance.clear()
-        axios.get(`http://localhost:5000/api/drawing/${id}`)
-            .then((res) => {
+        if (id) {
+            axios.get(`http://localhost:5000/api/drawing/${id}`)
+                .then((res) => {
+                    console.log(res)
+                    if (!res.data.error) {
+                        const canvasJSON =  res.data.drawing.canvas
+                        dispatch(setDrawingCanvas(canvasJSON));
+                        canvasInstance.clear();
+                        canvasInstance.loadFromJSON(canvasJSON)
+                            .then((canvas) => {
+                                canvas.requestRenderAll()
+                            })
+                            .catch((error) => console.error('Failed to restore canvas state:', error))
 
-                if (!res.data.error) {
-                    const canvasJSON = res.data.drawing.canvas
-                    canvasInstance.clear();
-                    canvasInstance.loadFromJSON(canvasJSON)
-                        .then((canvas) => {
-                            canvas.requestRenderAll()
-                        })
-                        .catch((error) => console.error('Failed to restore canvas state:', error))
-
-                }
-            })
-            .catch((error) => {
-                console.error("Error loading drawing from database:", error);
-            });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error loading drawing from database:", error);
+                });
+        }
 
 
 
 
         if (reduxCanvas) {
+            canvasInstance.clear();
             canvasInstance.loadFromJSON(reduxCanvas, () => {
                 canvasInstance.requestRenderAll();
             });
         } else {
-            console.log("found error redux")
+            console.log("canvas data not found on redux")
 
         }
         setCanvas(canvasInstance);
@@ -110,12 +113,12 @@ const Drawingpad = () => {
 
             // return imageUrl;
 
-            axios.post('http://localhost:5000/api/imgbbthumbnail',{
-                image:base64Image
+            axios.post('http://localhost:5000/api/imgbbthumbnail', {
+                image: base64Image
             })
-            .then((res)=>{
-                console.log(res)
-            })
+                .then((res) => {
+                    console.log(res)
+                })
         } catch (error) {
             console.error('Error uploading image to imgbb:', error);
             throw error;

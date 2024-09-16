@@ -25,6 +25,7 @@ const Dashboard = () => {
     }, [update])
 
     const handleCreateNewDrawing = () => {
+        dispatch(setDrawingTitle('Untitled Drawing'))
         axios.post('http://localhost:5000/api/drawing')
             .then((res) => {
                 console.log(res)

@@ -21,18 +21,19 @@ const Drawingpad = () => {
 
 
     useEffect(() => {
+        //Initializing the canvas
         const canvasInstance = new Canvas(canvasRef.current, {
             width: window.innerWidth,
             height: window.innerHeight,
             allowTouchScrolling: true,
         });
 
+        //Dynamic Render by ID
         if (id) {
             axios.get(`http://localhost:5000/api/drawing/${id}`)
                 .then((res) => {
-                    console.log(res)
                     if (!res.data.error) {
-                        const canvasJSON =  res.data.drawing.canvas
+                        const canvasJSON = res.data.drawing.canvas
                         dispatch(setDrawingCanvas(canvasJSON));
                         canvasInstance.clear();
                         canvasInstance.loadFromJSON(canvasJSON)
@@ -125,23 +126,29 @@ const Drawingpad = () => {
         }
     };
 
+    //
+    const updateDrawing = () => {
+        axios.put(`http://localhost:5000/api/drawing/${id}`, {
+            drawingTitle: reduxDrawingTitle,
+            canvas: reduxCanvas,
+            canvasThumbnail: drawingThumbnail
+
+        }).then((res) => {
+            console.log(res)
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+
+
     const saveCanvasToRedux = () => {
         if (canvas) {
             const canvasJSON = canvas.toJSON();
             dispatch(setDrawingCanvas(canvasJSON));
             // updating canvas on sevaral event
-            axios.put(`http://localhost:5000/api/drawing/${id}`, {
-                drawingTitle: reduxDrawingTitle,
-                canvas: canvasJSON,
-                canvasThumbnail: drawingThumbnail
-
-            }).then((res) => {
-                console.log(res)
-            }).catch((err) => {
-                console.log(err)
-            })
+            updateDrawing()
+            dispatch(setTestingSwitch())
         }
-        dispatch(setTestingSwitch())
 
     };
 
@@ -158,6 +165,8 @@ const Drawingpad = () => {
 
     if (canvas) canvas.on('mouse:up', saveCanvasToRedux)
 
+
+    //Select Button Functionality
     const handleSelect = async () => {
         if (canvas) {
             canvas.isDrawingMode = false;
@@ -172,6 +181,7 @@ const Drawingpad = () => {
 
     };
 
+    //Rectangle Button Functionality
     const addRect = () => {
         if (canvas) {
 
@@ -189,6 +199,7 @@ const Drawingpad = () => {
 
     };
 
+    //Circle Button Functionality
     const addCircle = () => {
         if (canvas) {
 
@@ -206,6 +217,7 @@ const Drawingpad = () => {
 
     };
 
+    //Line Button Functionality
     const addLine = () => {
         if (canvas) {
             const line = new Line([50, 50, 200, 200], {
@@ -220,6 +232,7 @@ const Drawingpad = () => {
 
     };
 
+    //Draw Functionality
     const addDraw = () => {
         if (canvas) {
             const brush = new PencilBrush(canvas);
@@ -235,9 +248,19 @@ const Drawingpad = () => {
         }
     };
 
+    //Erase Functionality
+    const startErase = () => {
+        if (canvas) {
+            const eraser = new PencilBrush(canvas)
+            eraser.color = '#FFFFFF';
+            eraser.width = 20;
+            canvas.isDrawingMode = true
+            canvas.freeDrawingBrush = eraser
+        }
+    }
 
 
-
+    //Textbox functionality
     const addTextBox = () => {
         if (canvas) {
 
@@ -259,18 +282,6 @@ const Drawingpad = () => {
             saveCanvasToRedux();
         }
     };
-
-    const startErase = () => {
-        if (canvas) {
-            const eraser = new PencilBrush(canvas)
-            eraser.color = '#FFFFFF';
-            eraser.width = 20;
-            canvas.isDrawingMode = true
-            canvas.freeDrawingBrush = eraser
-        }
-    }
-
-
 
     return (
         <div className='flex h-dvh flex-col'>

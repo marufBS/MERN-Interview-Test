@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Canvas, Circle, Line, Rect, Textbox, PencilBrush } from 'fabric';
+import { Canvas, Circle, Line, Rect, Textbox, PencilBrush, Triangle } from 'fabric';
 import Toolbar from './toolbar';
 import Navbar from './navbar';
 import { useDispatch, useSelector } from 'react-redux';
@@ -42,10 +42,10 @@ const Drawingpad = () => {
                         console.error("Error loading drawing from database:", error);
                     });
 
-                    resolve()
+                resolve()
             }).then(() => {
                 setCanvas(canvasInstance);
-                
+
             })
         }
         loadCanvas()
@@ -94,12 +94,16 @@ const Drawingpad = () => {
         return color;
     };
 
+    const getRandomNumber = (min, max) => {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
     // Add objects to the canvas
     const addRect = () => {
         canvas.isDrawingMode = false
         const rect = new Rect({
-            left: 20,
-            top: 20,
+            left: getRandomNumber(0, window.innerHeight / 2),
+            top: getRandomNumber(0, window.innerHeight / 2),
             height: 200,
             width: 200,
             fill: getRandomColor(),
@@ -114,13 +118,28 @@ const Drawingpad = () => {
 
             canvas.isDrawingMode = false
             const circle = new Circle({
-                left: 50,
-                top: 300,
-                radius: 40,
+                left: getRandomNumber(0, window.innerHeight / 2),
+                top: getRandomNumber(0, window.innerHeight / 2),
+                radius: getRandomNumber(0, window.innerHeight / 2),
                 fill: getRandomColor(),
             });
             canvas.add(circle);
             circle.on('modified', () => saveCanvasToRedux())
+            saveCanvasToRedux();
+        }
+    };
+    const addTriangle = () => {
+        if (canvas) {
+
+            canvas.isDrawingMode = false
+            const triangle = new Triangle({
+                left: 50,
+                top: 300,
+                angle: 30,
+                fill: getRandomColor(),
+            });
+            canvas.add(triangle);
+            triangle.on('modified', () => saveCanvasToRedux())
             saveCanvasToRedux();
         }
     };
@@ -171,7 +190,7 @@ const Drawingpad = () => {
         if (canvas) canvas.isDrawingMode = false;
     };
 
-    
+
 
 
     const addTextBox = () => {
@@ -212,6 +231,7 @@ const Drawingpad = () => {
                         addLine={addLine}
                         addRect={addRect}
                         addErase={addErase}
+                        addTriangle={addTriangle}
                     />
                 </div>
             </div>

@@ -18,7 +18,8 @@ const Toolbar = ({
             addDraw,
             handleSelect,
             addRect,
-            addErase
+            addErase,
+            addTriangle
         }) => {
     const [selectedTool, setSelectedTool] = useState("select");
 
@@ -46,6 +47,9 @@ const Toolbar = ({
             case 'line':
                 addLine()
                 break;
+            case 'triangle':
+                addTriangle()
+                break;
             default:
                 break;
         }
@@ -60,12 +64,7 @@ const Toolbar = ({
                 >
                     <FaMousePointer />
                 </button>
-                {/* <button
-                    className={`toolbar-button ${selectedTool === "hand" ? "active" : ""}`}
-                    onClick={() => handleToolClick("hand")}
-                >
-                    <FaHandPaper />
-                </button> */}
+                
                 <button
                     className={`toolbar-button ${selectedTool === "pencil" ? "active" : ""}`}
                     onClick={() => handleToolClick("pencil")}
@@ -99,6 +98,12 @@ const Toolbar = ({
                 <button
                     className={`toolbar-button ${selectedTool === "line" ? "active" : ""}`}
                     onClick={() => handleToolClick("line")}
+                >
+                    <FaLinesLeaning />
+                </button>
+                <button
+                    className={`toolbar-button ${selectedTool === "triangle" ? "active" : ""}`}
+                    onClick={() => handleToolClick("triangle")}
                 >
                     <FaLinesLeaning />
                 </button>

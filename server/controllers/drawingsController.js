@@ -48,6 +48,18 @@ export const updateDrawing = async (req, res) => {
     }
 }
 
+export const deleteDrawing = async (req, res) => {
+    try {
+
+        const { id } = req.params
+        console.log(id)
+        const deletedDrawing = await drawingModel.deleteOne({ _id: id })
+        res.status(200).send({ error: false, message: 'drawing deleted successfully', deletedDrawing: deletedDrawing })
+    } catch (error) {
+        res.status(500).send({ error: true, message: 'drawing not found' + error })
+    }
+}
+
 // post=> /api/imgbbThumbnail
 // export const saveThumbnail = async (req, res) => {
 

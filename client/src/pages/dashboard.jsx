@@ -15,7 +15,7 @@ const Dashboard = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        axios.get("http://localhost:5000/api/drawings")
+        axios.get("/api/drawings")
             .then((res) => {
                 if (!res.data.error) {
                     setDrawings(res.data.drawings)
@@ -26,7 +26,7 @@ const Dashboard = () => {
 
     const handleCreateNewDrawing = () => {
         dispatch(setDrawingTitle('Untitled Drawing'))
-        axios.post('http://localhost:5000/api/drawing')
+        axios.post('/api/drawing')
             .then((res) => {
                 console.log(res)
                 if (res.data.error === false) {

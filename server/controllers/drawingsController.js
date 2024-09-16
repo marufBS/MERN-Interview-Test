@@ -39,7 +39,6 @@ export const updateDrawing = async (req, res) => {
     try {
         const { id } = req.params
         const { drawingTitle, canvas, canvasThumbnail } = req.body
-        // console.log(canvasThumbnail)
         const updateDrawing = await drawingModel.findOneAndUpdate({ _id: id }, { id, canvas, drawingTitle, canvasThumbnail }, { new: true, upsert: true })
         res.status(200).send({ error: false, updateDrawing })
 
@@ -52,7 +51,6 @@ export const deleteDrawing = async (req, res) => {
     try {
 
         const { id } = req.params
-        console.log(id)
         const deletedDrawing = await drawingModel.deleteOne({ _id: id })
         res.status(200).send({ error: false, message: 'drawing deleted successfully', deletedDrawing: deletedDrawing })
     } catch (error) {

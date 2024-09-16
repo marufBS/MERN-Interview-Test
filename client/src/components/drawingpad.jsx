@@ -21,7 +21,6 @@ const Drawingpad = () => {
 
 
     useEffect(() => {
-        console.log('useEffect running')
         const canvasInstance = new Canvas(canvasRef.current, {
             width: window.innerWidth,
             height: window.innerHeight,
@@ -33,8 +32,6 @@ const Drawingpad = () => {
             .then((res) => {
 
                 if (!res.data.error) {
-
-                    console.log("drawing data:", res.data);
                     const canvasJSON = res.data.drawing.canvas
                     canvasInstance.clear();
                     canvasInstance.loadFromJSON(canvasJSON)
@@ -53,7 +50,6 @@ const Drawingpad = () => {
 
 
         if (reduxCanvas) {
-            console.log("redux part working", reduxCanvas)
             canvasInstance.loadFromJSON(reduxCanvas, () => {
                 canvasInstance.requestRenderAll();
             });
@@ -127,7 +123,6 @@ const Drawingpad = () => {
     };
 
     const saveCanvasToRedux = () => {
-        console.log('updating...')
         if (canvas) {
             const canvasJSON = canvas.toJSON();
             dispatch(setDrawingCanvas(canvasJSON));
@@ -150,9 +145,7 @@ const Drawingpad = () => {
     const deleteSelectedObject = async () => {
         if (canvas) {
             const activeObject = await canvas.getActiveObject();
-            console.log(activeObject)
             if (activeObject) {
-                console.log('deleting ')
                 canvas.remove(activeObject);
                 // canvas.requestRenderAll();
                 saveCanvasToRedux();
@@ -166,7 +159,6 @@ const Drawingpad = () => {
         if (canvas) {
             canvas.isDrawingMode = false;
             // dispatch(setDrawingThumbnail(getBase64Data().then((res)=>console.log(res))))
-            console.log("getting base64")
             // await getBase64Data().then((res) => dispatch(setDrawingThumbnail(res)))
             // uploadImageToImgbb().then(async (res) => console.log(res))
             // await getBase64Data().then(async (res) => {
@@ -257,7 +249,6 @@ const Drawingpad = () => {
             });
             textbox.enterEditing();
             textbox.on('mousedown', () => {
-                console.log('mousedown event working')
                 textbox.exitEditing();
             });
             canvas.add(textbox);

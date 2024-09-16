@@ -6,7 +6,7 @@ import { setDrawingTitle } from './drawingpadSlice';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isInput, setIsInput] = useState(false)
+    // const [isInput, setIsInput] = useState(false)
     const dispatch = useDispatch()
     const reduxDrawingTitle = useSelector((state)=>state.drawing.drawingTitle)
     const toggleNavbar = () => {
@@ -21,7 +21,7 @@ const Navbar = () => {
                     className='focus:outline-none border-2 border-white hover:border-black rounded-lg text-center text-xl py-1' 
                     onChange={(e) => dispatch(setDrawingTitle(e.target.value))}
                     onKeyDown={(e) => {
-                        if (e.key === 'Enter') setIsInput(false);
+                        // if (e.key === 'Enter') setIsInput(false);
                     }}
                     defaultValue={reduxDrawingTitle?reduxDrawingTitle:'Untitled Drawing'} 
                 />

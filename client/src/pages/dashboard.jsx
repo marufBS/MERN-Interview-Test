@@ -5,39 +5,38 @@ import './dashboard.css'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux'
 import { setDrawingTitle } from '../components/drawingpadSlice';
+import { MdOutlineDeleteForever } from "react-icons/md";
 const Dashboard = () => {
-
-    const data = [1, 2, 3, 4]
     const navigate = useNavigate()
     const [drawings, setDrawings] = useState([]);
     const dispatch = useDispatch()
 
     useEffect(() => {
         axios.get("http://localhost:5000/api/drawings")
-        .then((res) => {
-            if(!res.data.error) {
-                setDrawings(res.data.drawings)
-            }
-        })
+            .then((res) => {
+                if (!res.data.error) {
+                    setDrawings(res.data.drawings)
+                }
+            })
     }, [])
 
-    const handleCreateNewDrawing = () =>{
+    const handleCreateNewDrawing = () => {
         axios.post('http://localhost:5000/api/drawing')
-        .then((res) => {
-            console.log(res)
-            if(res.data.error === false) {
-                let id = res.data.drawing._id
-                navigate(`/drawing/${id}`);
-            }
-        })
+            .then((res) => {
+                console.log(res)
+                if (res.data.error === false) {
+                    let id = res.data.drawing._id
+                    navigate(`/drawing/${id}`);
+                }
+            })
 
     }
     // console.log(drawings)
 
-    const handleOpenDrawing = (d)=>{
-        const currentCanvas =  drawings.find((item)=>item._id===d._id)
+    const handleOpenDrawing = (d) => {
+        const currentCanvas = drawings.find((item) => item._id === d._id)
         // const currentCanvasTitle = drawings.find
-        console.log("sdflksdf=>",currentCanvas)
+        console.log("sdflksdf=>", currentCanvas)
         dispatch(setDrawingTitle(d.drawingTitle))
         // dispatch(setDrawingCanvas(currentCanvas.canvas))
         navigate(`/drawing/${d._id}`)
@@ -54,7 +53,18 @@ const Dashboard = () => {
                 </div>
                 {
                     drawings.map((item, i) => (
-                        <div onClick={()=>handleOpenDrawing(item)} className='w-full h-80 transition ease-in-out delay-50 hover:bg-slate-300 bg-slate-200 rounded-md'>{item.drawingTitle}</div>
+                        <div key={item._id} onClick={() => handleOpenDrawing(item)} className='flex flex-col justify-around w-full h-80 transition ease-in-out delay-50 hover:bg-slate-300 bg-slate-200 rounded-md'>
+                            <img className='bg-slate-400 flex-1 rounded-t-md' src={item.canvasThumbnail} alt="" />
+                            <div className='flex justify-between p-3'>
+                                <div className='text-xl'>{item.drawingTitle}</div>
+                                <div className='flex justify-center items-center'>
+                                    <button type="button" class="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-1 text-center inline-flex items-center me-2 ">
+                                        <MdOutlineDeleteForever size={25}/>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
                     ))
                 }
             </div>

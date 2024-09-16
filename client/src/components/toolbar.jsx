@@ -1,20 +1,27 @@
 import React, { useState } from "react";
-import { FaMousePointer, FaHandPaper, FaPencilAlt, FaEraser, FaArrowUp, FaTextHeight, FaEdit, FaImage, FaSquare } from "react-icons/fa";
-import { CiText } from "react-icons/ci";
-import { RiText } from "react-icons/ri";
+import { 
+    FaMousePointer, 
+    FaHandPaper, 
+    FaPencilAlt, 
+    FaEraser, 
+    FaArrowUp, 
+    // FaTextHeight, FaEdit, FaImage, FaSquare 
+} from "react-icons/fa";
+// import { CiText } from "react-icons/ci";
+// import { RiText } from "react-icons/ri";
 import { MdOutlineTextFields } from "react-icons/md";
-import { BiUndo, BiRedo } from "react-icons/bi";
+// import { BiUndo, BiRedo } from "react-icons/bi";
 import { LuRectangleHorizontal } from "react-icons/lu";
 import { FaRegCircle } from "react-icons/fa";
-import { IoTriangleOutline } from "react-icons/io5";
+// import { IoTriangleOutline } from "react-icons/io5";
 import { FaLinesLeaning } from "react-icons/fa6";
 import './toolbar.css'; // Import a CSS file for the styles
 
 const Toolbar = ({
-            setIsDrawingMode,
-            isDrawingMode,
+            // setIsDrawingMode,
+            // isDrawingMode,
             addCircle,
-            addLine,
+            // addLine,
             addTextBox,
             addDraw,
             handleSelect,

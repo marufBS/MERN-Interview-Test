@@ -10,6 +10,10 @@ const drawingSchema = new mongoose.Schema({
         requiered:false,
         default:null
     },
+    canvasThumbnail: {
+        type: String,
+        required: false,
+    },
     createdAt: { type: Date, default: Date.now, },
     updatedAt: { type: Date, default: Date.now, },
 })

@@ -3,16 +3,20 @@ import { Canvas, Circle, Line, Rect, Textbox, PencilBrush } from 'fabric';
 import Toolbar from './toolbar';
 import Navbar from './navbar';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDrawingCanvas, setTestingSwitch } from './drawingpadSlice';
+import { setDrawingCanvas, setDrawingThumbnail, setTestingSwitch } from './drawingpadSlice';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
+//loaging the .env file
+
 const Drawingpad = () => {
+    const IMGBB_API_KEY = '2b6dcaf41fa4832f8d0cfe58769998fb'
     const canvasRef = useRef(null);
     const [canvas, setCanvas] = useState(null);
     const dispatch = useDispatch();
     const reduxCanvas = useSelector((state) => state.drawing.drawingCanvas);
     const reduxDrawingTitle = useSelector((state) => state.drawing.drawingTitle)
+    const drawingThumbnail = useSelector((state) => state.drawing.drawingThumbnail)
     const { id } = useParams()
 
 
@@ -73,18 +77,52 @@ const Drawingpad = () => {
             canvasInstance.dispose();
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, []);
+    }, [id]);
 
-    const getBase64Data = () => {
+    const getBase64Data = async () => {
         if (canvas) {
-            // Get the base64 data
-            const dataURL = canvas.toDataURL({
-                format: 'png', // Choose the image format (png, jpeg, etc.)
-                quality: 0.8, // Quality for jpeg format (0 - 1)
-            });
+            return new Promise((resolve) => {
 
-            console.log(dataURL); // Base64 data
-            return dataURL;
+
+                // Get the base64 data
+                const dataURL = canvas.toDataURL({
+                    format: 'png', // Choose the image format (png, jpeg, etc.)
+                    quality: 0.1, // Quality for jpeg format (0 - 1)
+                });
+                resolve(dataURL)
+            })
+        }
+    };
+
+
+    const uploadImageToImgbb = async (base64Image) => {
+        try {
+            // Construct the form data
+            // const formData = new FormData();
+            // formData.append('image', base64Image);
+            // console.log('====>',formData)
+
+            // Send the POST request to imgbb
+            // const response = await axios.post(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            //     image:base64Image,
+            //     key:IMGBB_API_KEY
+            // });
+            // console.log(response)
+
+            // // Extract the URL from the response
+            // const imageUrl = response.data.data.url;
+
+            // return imageUrl;
+
+            axios.post('http://localhost:5000/api/imgbbthumbnail',{
+                image:base64Image
+            })
+            .then((res)=>{
+                console.log(res)
+            })
+        } catch (error) {
+            console.error('Error uploading image to imgbb:', error);
+            throw error;
         }
     };
 
@@ -93,9 +131,12 @@ const Drawingpad = () => {
         if (canvas) {
             const canvasJSON = canvas.toJSON();
             dispatch(setDrawingCanvas(canvasJSON));
+            // updating canvas on sevaral event
             axios.put(`http://localhost:5000/api/drawing/${id}`, {
                 drawingTitle: reduxDrawingTitle,
-                canvas: canvasJSON
+                canvas: canvasJSON,
+                canvasThumbnail: drawingThumbnail
+
             }).then((res) => {
                 console.log(res)
             }).catch((err) => {
@@ -121,10 +162,19 @@ const Drawingpad = () => {
 
     if (canvas) canvas.on('mouse:up', saveCanvasToRedux)
 
-    const handleSelect = () => {
+    const handleSelect = async () => {
         if (canvas) {
             canvas.isDrawingMode = false;
+            // dispatch(setDrawingThumbnail(getBase64Data().then((res)=>console.log(res))))
+            console.log("getting base64")
+            // await getBase64Data().then((res) => dispatch(setDrawingThumbnail(res)))
+            // uploadImageToImgbb().then(async (res) => console.log(res))
+            // await getBase64Data().then(async (res) => {
+            //     await uploadImageToImgbb(res)
+            //         .then((link) => console.log(link))
+            // })
         }
+
     };
 
     const addRect = () => {

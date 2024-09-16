@@ -7,6 +7,7 @@ const drawingSlice = createSlice({
         drawingCanvas:null,
         drawingTitle:"",
         testingSwitch:false,
+        drawingThumbnail:""
     },
     reducers:{
         setDrawingObjects:((state,action)=>{
@@ -20,9 +21,12 @@ const drawingSlice = createSlice({
         }),
         setTestingSwitch:((state)=>{
             state.testingSwitch=!state.testingSwitch
+        }),
+        setDrawingThumbnail:((state,action)=>{
+            state.drawingThumbnail = action.payload
         })
     }
 })
 
-export const {setDrawingObjects, setDrawingCanvas,setDrawingTitle,setTestingSwitch} = drawingSlice.actions
+export const {setDrawingObjects, setDrawingCanvas,setDrawingTitle,setTestingSwitch,setDrawingThumbnail} = drawingSlice.actions
 export default drawingSlice.reducer

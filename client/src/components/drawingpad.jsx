@@ -22,15 +22,12 @@ const Drawingpad = () => {
             allowTouchScrolling: true,
         });
 
-        // canvasInstance.clear();
-
         const loadCanvas = async () => {
             return new Promise((resolve) => {
                 axios.get(`${Vercel_URL}/api/drawing/${id}`)
                     .then((res) => {
                         canvasInstance.clear();
                         if (!res.data.error) {
-                            console.log("drawing data:", res.data);
                             const canvasJSON = res.data.drawing.canvas
                             if (res.data.drawing.canvas) {
                                 canvasInstance.loadFromJSON(canvasJSON)
@@ -56,14 +53,10 @@ const Drawingpad = () => {
         // Load canvas from Redux if available
         if (reduxCanvas) {
             canvasInstance.clear();
-            console.log("redux part working")
             canvasInstance.loadFromJSON(reduxCanvas, () => {
                 canvasInstance.requestRenderAll()
             });
-        } else {
-            console.log("found error redux")
         }
-        // Set canvas instance to state
 
 
         canvasInstance.on('object:modified', saveCanvasToRedux)
@@ -77,9 +70,7 @@ const Drawingpad = () => {
 
 
     const saveCanvasToRedux = () => {
-        console.log('saving without')
         if (canvas) {
-            console.log('saving canvas')
             const canvasJSON = canvas.toJSON();
             dispatch(setDrawingCanvas(canvasJSON));
         }
@@ -95,6 +86,7 @@ const Drawingpad = () => {
         return color;
     };
 
+    //genrate random number for position
     const getRandomNumber = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     };
@@ -106,7 +98,7 @@ const Drawingpad = () => {
             left: getRandomNumber(0, window.innerHeight / 2),
             top: getRandomNumber(0, window.innerHeight / 2),
             height: 200,
-            width: 200,
+            width: 500,
             fill: getRandomColor(),
         });
         canvas.add(rect);
@@ -116,12 +108,11 @@ const Drawingpad = () => {
 
     const addCircle = () => {
         if (canvas) {
-
             canvas.isDrawingMode = false
             const circle = new Circle({
                 left: getRandomNumber(0, window.innerHeight / 2),
                 top: getRandomNumber(0, window.innerHeight / 2),
-                radius: getRandomNumber(0, window.innerHeight / 2),
+                radius: getRandomNumber(0, 200),
                 fill: getRandomColor(),
             });
             canvas.add(circle);
@@ -131,12 +122,11 @@ const Drawingpad = () => {
     };
     const addTriangle = () => {
         if (canvas) {
-
             canvas.isDrawingMode = false
             const triangle = new Triangle({
-                left: 50,
-                top: 300,
-                angle: 30,
+                left: getRandomNumber(0, window.innerHeight / 2),
+                top: getRandomNumber(0, window.innerHeight / 2),
+                angle: getRandomNumber(0, 360),
                 fill: getRandomColor(),
             });
             canvas.add(triangle);
@@ -146,23 +136,26 @@ const Drawingpad = () => {
     };
 
     const addLine = () => {
-        canvas.isDrawingMode = false
-        const line = new Line([50, 50, 200, 200], {
-            stroke: 'green',
-            strokeWidth: 5,
-            selectable: true, // Allow selection and moving
+        if (canvas) {
 
-        });
-        canvas.freeDrawingMode = true
-        canvas.freeDrawingBrush = line
-        canvas.add(line);
-        saveCanvasToRedux();
+            canvas.isDrawingMode = false
+            const line = new Line([50, 50, 200, 200], {
+                stroke: getRandomColor(),
+                strokeWidth: 5,
+                selectable: true,
+
+            });
+            canvas.freeDrawingMode = true
+            canvas.freeDrawingBrush = line
+            canvas.add(line);
+            saveCanvasToRedux();
+        }
     };
 
     const addDraw = () => {
         if (canvas) {
             const brush = new PencilBrush(canvas);
-            brush.color = '#000000';
+            brush.color = getRandomColor();
             brush.width = 5;
             canvas.isDrawingMode = true;
             canvas.freeDrawingBrush = brush;
@@ -197,16 +190,14 @@ const Drawingpad = () => {
     const addTextBox = () => {
         canvas.isDrawingMode = false;
         const textbox = new Textbox('', {
-            left: 400,
-            top: 300,
+            left: getRandomNumber(200,500),
+            top: getRandomNumber(200,500),
             fill: 'black',
             fontSize: 50,
             width: 300,
             hasControls: true,
         });
-
         textbox.enterEditing();
-
         textbox.on('deselected', () => {
             textbox.exitEditing();
             saveCanvasToRedux();

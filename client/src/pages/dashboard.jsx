@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import { IoAdd } from "react-icons/io5";
 import './dashboard.css'
+import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux'
 import { setDrawingTitle } from '../components/drawingpadSlice';
+import { IoAdd } from "react-icons/io5";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import Loader from '../components/loader';
+
 const Dashboard = () => {
     const Vercel_URL = "https://mern-interview-test-server-kappa.vercel.app"
     const navigate = useNavigate()
@@ -29,8 +30,7 @@ const Dashboard = () => {
         dispatch(setDrawingTitle('Untitled Drawing'))
         axios.post(`${Vercel_URL}/api/drawing`)
             .then((res) => {
-                console.log(res)
-                if (res.data.error === false) {
+                if (!res.data.error) {
                     let id = res.data.drawing._id
                     navigate(`/drawing/${id}`);
                 }
@@ -39,16 +39,12 @@ const Dashboard = () => {
     }
 
     const handleOpenDrawing = (d) => {
-        const currentCanvas = drawings.find((item) => item._id === d._id)
-        // const currentCanvasTitle = drawings.find
-        // console.log("sdflksdf=>", currentCanvas)
         dispatch(setDrawingTitle(d.drawingTitle))
-        // dispatch(setDrawingCanvas(currentCanvas.canvas))
         navigate(`/drawing/${d._id}`)
     }
 
     const handleDeleteDrawing = (id) => {
-        if (window.confirm("Are you sure you want to delete ?") == true) {
+        if (window.confirm("Are you sure you want to delete ?") === true) {
 
             axios.delete(`${Vercel_URL}/api/drawing/${id}`)
                 .then((res) => {
@@ -61,8 +57,6 @@ const Dashboard = () => {
                 })
 
 
-        } else {
-            alert('you cancelled')
         }
     }
     return (

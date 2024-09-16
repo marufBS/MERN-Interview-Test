@@ -10,6 +10,7 @@ import {
 import { MdOutlineTextFields } from "react-icons/md";
 import { LuRectangleHorizontal } from "react-icons/lu";
 import { FaLinesLeaning } from "react-icons/fa6";
+import { IoTriangleOutline } from "react-icons/io5";
 
 const Toolbar = ({
             addCircle,
@@ -105,7 +106,7 @@ const Toolbar = ({
                     className={`toolbar-button ${selectedTool === "triangle" ? "active" : ""}`}
                     onClick={() => handleToolClick("triangle")}
                 >
-                    <FaLinesLeaning />
+                    <IoTriangleOutline />
                 </button>
             </div>
         </div>

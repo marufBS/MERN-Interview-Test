@@ -3,22 +3,14 @@ import { Canvas, Circle, Line, Rect, Textbox, PencilBrush } from 'fabric';
 import Toolbar from './toolbar';
 import Navbar from './navbar';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCanvasBase64, setDrawingCanvas, setDrawingThumbnail, setIsUpdate, setTestingSwitch } from './drawingpadSlice';
+import { setDrawingCanvas } from './drawingpadSlice';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { IoDuplicate } from 'react-icons/io5';
-
-//loaging the .env file
-
 const Drawingpad = () => {
-    const IMGBB_API_KEY = '2b6dcaf41fa4832f8d0cfe58769998fb'
     const canvasRef = useRef(null);
     const [canvas, setCanvas] = useState(null);
     const dispatch = useDispatch();
     const reduxCanvas = useSelector((state) => state.drawing.drawingCanvas);
-    const reduxDrawingTitle = useSelector((state) => state.drawing.drawingTitle)
-    const drawingThumbnail = useSelector((state) => state.drawing.drawingThumbnail)
-    const isUpdate = useSelector((state) => state.drawing.isUpdate)
     const { id } = useParams()
 
 
@@ -29,28 +21,40 @@ const Drawingpad = () => {
             allowTouchScrolling: true,
         });
 
-        canvasInstance.clear();
+        // canvasInstance.clear();
 
-        axios.get(`http://localhost:5000/api/drawing/${id}`)
-            .then((res) => {
+        const loadCanvas = async () => {
+            return new Promise((resolve) => {
+                axios.get(`http://localhost:5000/api/drawing/${id}`)
+                    .then((res) => {
+                        canvasInstance.clear();
+                        if (!res.data.error) {
+                            console.log("drawing data:", res.data);
+                            const canvasJSON = res.data.drawing.canvas
+                            if (res.data.drawing.canvas) {
+                                canvasInstance.loadFromJSON(canvasJSON)
+                                    .then((canvas) => canvas.requestRenderAll())
+                                    .catch((error) => console.error('Failed to restore canvas state:', error))
+                            }
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error loading drawing from database:", error);
+                    });
 
-                if (!res.data.error) {
-                    console.log("drawing data:", res.data);
-                    const canvasJSON = res.data.drawing.canvas
-                    if (res.data.drawing.canvas) {
-                        canvasInstance.loadFromJSON(canvasJSON)
-                            .then((canvas) => canvas.requestRenderAll())
-                            .catch((error) => console.error('Failed to restore canvas state:', error))
-                    }
-                }
+                    resolve()
+            }).then(() => {
+                setCanvas(canvasInstance);
+                
             })
-            .catch((error) => {
-                console.error("Error loading drawing from database:", error);
-            });
+        }
+        loadCanvas()
+
 
 
         // Load canvas from Redux if available
         if (reduxCanvas) {
+            canvasInstance.clear();
             console.log("redux part working")
             canvasInstance.loadFromJSON(reduxCanvas, () => {
                 canvasInstance.requestRenderAll()
@@ -59,24 +63,17 @@ const Drawingpad = () => {
             console.log("found error redux")
         }
         // Set canvas instance to state
-        setCanvas(canvasInstance);
+
 
         canvasInstance.on('object:modified', saveCanvasToRedux)
-        setCanvasBase64(canvasInstance.toDataURL({
-            format: 'png', // Can be 'jpeg' or 'jpg' if you want a different format
-            quality: 0.8, // Quality (0 to 1), applicable for 'jpeg' format
-        }).split('base64,')[1])
+        canvasInstance.on('object:added', saveCanvasToRedux)
         return () => {
-            // canvasInstance.off('object:modified',saveCanvasToRedux) 
+            canvasInstance.off('object:modified', saveCanvasToRedux)
+            canvasInstance.off('object:added', saveCanvasToRedux)
             canvasInstance.dispose();
         };
     }, []);
 
-    useEffect(() => {
-        if (isUpdate) {
-            // saveCanvasToRedux()
-        }
-    }, [isUpdate])
 
     const saveCanvasToRedux = () => {
         console.log('saving without')
@@ -87,7 +84,17 @@ const Drawingpad = () => {
         }
     };
 
-    // Add various objects to the canvas
+    //generating random color
+    const getRandomColor = () => {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    };
+
+    // Add objects to the canvas
     const addRect = () => {
         canvas.isDrawingMode = false
         const rect = new Rect({
@@ -95,23 +102,27 @@ const Drawingpad = () => {
             top: 20,
             height: 200,
             width: 200,
-            fill: 'red',
+            fill: getRandomColor(),
         });
         canvas.add(rect);
-        saveCanvasToRedux(); // Save canvas after adding object
+        rect.on('modified', () => saveCanvasToRedux())
+        saveCanvasToRedux();
     };
 
     const addCircle = () => {
-        canvas.isDrawingMode = false
-        const circle = new Circle({
-            left: 50,
-            top: 300,
-            radius: 40,
-            fill: 'orange',
-        });
-        canvas.add(circle);
-        circle.on('modified',()=>saveCanvasToRedux())
-        saveCanvasToRedux(); // Save canvas after adding object
+        if (canvas) {
+
+            canvas.isDrawingMode = false
+            const circle = new Circle({
+                left: 50,
+                top: 300,
+                radius: 40,
+                fill: getRandomColor(),
+            });
+            canvas.add(circle);
+            circle.on('modified', () => saveCanvasToRedux())
+            saveCanvasToRedux();
+        }
     };
 
     const addLine = () => {
@@ -119,9 +130,13 @@ const Drawingpad = () => {
         const line = new Line([50, 50, 200, 200], {
             stroke: 'green',
             strokeWidth: 5,
+            selectable: true, // Allow selection and moving
+
         });
+        canvas.freeDrawingMode = true
+        canvas.freeDrawingBrush = line
         canvas.add(line);
-        saveCanvasToRedux(); // Save canvas after adding object
+        saveCanvasToRedux();
     };
 
     const addDraw = () => {
@@ -133,7 +148,7 @@ const Drawingpad = () => {
             canvas.freeDrawingBrush = brush;
 
             canvas.on('mouse:up', () => {
-                saveCanvasToRedux(); // Save canvas after drawing
+                saveCanvasToRedux();
             });
         }
     };
@@ -147,14 +162,16 @@ const Drawingpad = () => {
             canvas.freeDrawingBrush = erase;
 
             canvas.on('mouse:up', () => {
-                saveCanvasToRedux(); // Save canvas after drawing
+                saveCanvasToRedux();
             });
         }
     }
 
     const handleSelect = () => {
-        canvas.isDrawingMode = false;
+        if (canvas) canvas.isDrawingMode = false;
     };
+
+    
 
 
     const addTextBox = () => {
@@ -162,7 +179,7 @@ const Drawingpad = () => {
         const textbox = new Textbox('', {
             left: 400,
             top: 300,
-            fill: 'orange',
+            fill: 'black',
             fontSize: 50,
             width: 300,
             hasControls: true,
@@ -170,12 +187,13 @@ const Drawingpad = () => {
 
         textbox.enterEditing();
 
-        textbox.on('mousedown', () => {
+        textbox.on('deselected', () => {
             textbox.exitEditing();
+            saveCanvasToRedux();
         });
 
         canvas.add(textbox);
-        saveCanvasToRedux(); // Save canvas after adding textbox
+        saveCanvasToRedux();
     };
 
     return (
@@ -187,7 +205,6 @@ const Drawingpad = () => {
             <div className='flex items-end'>
                 <div className='absolute w-full h-32 flex justify-center items-center'>
                     <Toolbar
-                        // setIsDrawingMode={setIsDrawingMode} 
                         handleSelect={handleSelect}
                         addDraw={addDraw}
                         addTextBox={addTextBox}

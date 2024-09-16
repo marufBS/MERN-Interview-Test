@@ -1,27 +1,19 @@
 import React, { useState } from "react";
+import './toolbar.css'; 
 import { 
     FaMousePointer, 
-    FaHandPaper, 
     FaPencilAlt, 
-    FaEraser, 
-    FaArrowUp, 
-    // FaTextHeight, FaEdit, FaImage, FaSquare 
+    FaEraser,
+    FaRegCircle
+
 } from "react-icons/fa";
-// import { CiText } from "react-icons/ci";
-// import { RiText } from "react-icons/ri";
 import { MdOutlineTextFields } from "react-icons/md";
-// import { BiUndo, BiRedo } from "react-icons/bi";
 import { LuRectangleHorizontal } from "react-icons/lu";
-import { FaRegCircle } from "react-icons/fa";
-// import { IoTriangleOutline } from "react-icons/io5";
 import { FaLinesLeaning } from "react-icons/fa6";
-import './toolbar.css'; // Import a CSS file for the styles
 
 const Toolbar = ({
-            // setIsDrawingMode,
-            // isDrawingMode,
             addCircle,
-            // addLine,
+            addLine,
             addTextBox,
             addDraw,
             handleSelect,
@@ -51,6 +43,9 @@ const Toolbar = ({
             case 'edit':
                 addTextBox()
                 break;
+            case 'line':
+                addLine()
+                break;
             default:
                 break;
         }
@@ -65,12 +60,12 @@ const Toolbar = ({
                 >
                     <FaMousePointer />
                 </button>
-                <button
+                {/* <button
                     className={`toolbar-button ${selectedTool === "hand" ? "active" : ""}`}
                     onClick={() => handleToolClick("hand")}
                 >
                     <FaHandPaper />
-                </button>
+                </button> */}
                 <button
                     className={`toolbar-button ${selectedTool === "pencil" ? "active" : ""}`}
                     onClick={() => handleToolClick("pencil")}
@@ -84,29 +79,11 @@ const Toolbar = ({
                     <FaEraser />
                 </button>
                 <button
-                    className={`toolbar-button ${selectedTool === "arrow" ? "active" : ""}`}
-                    onClick={() => handleToolClick("arrow")}
-                >
-                    <FaArrowUp />
-                </button>
-                <button
                     className={`toolbar-button ${selectedTool === "edit" ? "active" : ""}`}
                     onClick={() => handleToolClick("edit")}
                 >
                     <MdOutlineTextFields />
                 </button>
-                {/* <button
-                    className={`toolbar-button ${selectedTool === "undo" ? "active" : ""}`}
-                    onClick={() => handleToolClick("undo")}
-                >
-                    <BiUndo />
-                </button>
-                <button
-                    className={`toolbar-button ${selectedTool === "redo" ? "active" : ""}`}
-                    onClick={() => handleToolClick("redo")}
-                >
-                    <BiRedo />
-                </button> */}
                 <button
                     className={`toolbar-button ${selectedTool === "circle" ? "active" : ""}`}
                     onClick={() => handleToolClick("circle")}

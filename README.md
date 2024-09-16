@@ -40,6 +40,7 @@ This is a drawing application built using React and Fabric.js. The application a
 4. Set up your `.env` file in the `server` folder with the following:
     ```env
     MONGODB_URI=mongodb+srv://whiteboard-dev:rEt96UbleBHaF5lP@cluster0.s24bq.mongodb.net
+    PORT = 5000
     ```
 5. Start the development server:
     ```bash

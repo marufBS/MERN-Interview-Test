@@ -7,6 +7,7 @@ import { setDrawingCanvas } from './drawingpadSlice';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 const Drawingpad = () => {
+    const Vercel_URL = "https://mern-interview-test-server-kappa.vercel.app"
     const canvasRef = useRef(null);
     const [canvas, setCanvas] = useState(null);
     const dispatch = useDispatch();
@@ -25,7 +26,7 @@ const Drawingpad = () => {
 
         const loadCanvas = async () => {
             return new Promise((resolve) => {
-                axios.get(`http://localhost:5000/api/drawing/${id}`)
+                axios.get(`${Vercel_URL}/api/drawing/${id}`)
                     .then((res) => {
                         canvasInstance.clear();
                         if (!res.data.error) {

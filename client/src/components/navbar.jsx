@@ -6,8 +6,8 @@ import { setDrawingCanvas, setDrawingTitle } from './drawingpadSlice';
 import axios from 'axios';
 
 const Navbar = () => {
+    const Vercel_URL = "https://mern-interview-test-server-kappa.vercel.app"
     const [isOpen, setIsOpen] = useState(false);
-    // const [isInput, setIsInput] = useState(false)
     const dispatch = useDispatch()
     const reduxCanvas = useSelector((state) => state.drawing.drawingCanvas);
     const reduxDrawingTitle = useSelector((state) => state.drawing.drawingTitle)
@@ -19,23 +19,7 @@ const Navbar = () => {
     };
 
     const saveDrawing = async() => {
-
-        // const base64 = await reduxCanvas.to toDataURL({
-        //     format: 'png', // Can be 'jpeg' or 'jpg' if you want a different format
-        //     quality: 0.8, // Quality (0 to 1), applicable for 'jpeg' format
-        // });
-        console.log(canvasBase64)
-
-        // axios.post(`https://api.imgbb.com/1/upload/`,{
-        //     key:'2b6dcaf41fa4832f8d0cfe58769998fb',
-        //     image:base64.split('base64,')[1]
-        // },{ 
-        //     'Content-Type': 'application/x-www-form-urlencoded'
-        //   },).then((res)=>{
-        //     console.log(res.data)
-        // })
-
-        axios.put(`http://localhost:5000/api/drawing/${id}`, {
+        axios.put(`${Vercel_URL}/api/drawing/${id}`, {
             drawingTitle: reduxDrawingTitle,
             canvas: reduxCanvas,
             drawingThumbnail: drawingThumbnail

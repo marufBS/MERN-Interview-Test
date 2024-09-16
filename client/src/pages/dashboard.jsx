@@ -8,6 +8,7 @@ import { setDrawingTitle } from '../components/drawingpadSlice';
 import { MdOutlineDeleteForever } from "react-icons/md";
 import Loader from '../components/loader';
 const Dashboard = () => {
+    const Vercel_URL = "https://mern-interview-test-server-kappa.vercel.app"
     const navigate = useNavigate()
     const [drawings, setDrawings] = useState([]);
     const [update, setUpdate] = useState(false)
@@ -15,7 +16,7 @@ const Dashboard = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        axios.get("/api/drawings")
+        axios.get(`${Vercel_URL}/api/drawings`)
             .then((res) => {
                 if (!res.data.error) {
                     setDrawings(res.data.drawings)
@@ -26,7 +27,7 @@ const Dashboard = () => {
 
     const handleCreateNewDrawing = () => {
         dispatch(setDrawingTitle('Untitled Drawing'))
-        axios.post('/api/drawing')
+        axios.post(`${Vercel_URL}/api/drawing`)
             .then((res) => {
                 console.log(res)
                 if (res.data.error === false) {
